@@ -1,0 +1,27 @@
+{
+  "name": "mild-set",
+  "repository": "github:fabiospampinato/mild-set",
+  "description": "A WeakSet that supports any value, it holds strong references to primitives, and weak references to objects.",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "clean": "tsex clean",
+    "compile": "tsex compile",
+    "compile:watch": "tsex compile --watch",
+    "test": "node --expose-gc test/index.js",
+    "prepublishOnly": "npm run clean && npm run compile && npm run test"
+  },
+  "keywords": [
+    "weak",
+    "strong",
+    "map"
+  ],
+  "devDependencies": {
+    "fava": "^0.1.2",
+    "tsex": "^2.1.0",
+    "typescript": "^4.9.5"
+  }
+}
