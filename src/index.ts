@@ -11,6 +11,10 @@ class MildSet<V> {
 
   #strong = new Set<V> ();
   #weak = new WeakSet<any> ();
+  #size = 0;
+
+  #finalizationRegistry = new FinalizationRegistry ( () => this.#size -= 1 );
+  #finalizationTokens = new WeakMap<object, object> ();
 
   /* CONSTRUCTOR */
 
@@ -28,13 +32,38 @@ class MildSet<V> {
 
   }
 
+  /* GETTER API */
+
+  get size () {
+
+    return this.#size;
+
+  }
+
   /* API */
 
   add ( value: V ): this {
 
+    const hasValue = this.has ( value );
+
+    if ( !hasValue ) {
+
+      this.#size += 1;
+
+    }
+
     if ( isWeakReferrable ( value ) ) {
 
       this.#weak.add ( value );
+
+      if ( !hasValue ) {
+
+        const token = {};
+
+        this.#finalizationRegistry.register ( value, token, token );
+        this.#finalizationTokens.set ( value, token );
+
+      }
 
     } else {
 
@@ -48,7 +77,22 @@ class MildSet<V> {
 
   delete ( value: V ): boolean {
 
+    const hasValue = this.has ( value );
+
+    if ( !hasValue ) return false;
+
+    this.#size -= 1;
+
     if ( isWeakReferrable ( value ) ) {
+
+      const token = this.#finalizationTokens.get ( value );
+
+      if ( token ) {
+
+        this.#finalizationRegistry.unregister ( token );
+        this.#finalizationTokens.delete ( value );
+
+      }
 
       return this.#weak.delete ( value );
 

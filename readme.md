@@ -12,6 +12,8 @@ npm install --save mild-set
 
 It has the same API of a WeakSet, except that it just works with primitives too.
 
+It also implements the `size` property, like a Set.
+
 ## License
 
 MIT © Fabio Spampinato

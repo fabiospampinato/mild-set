@@ -16,6 +16,8 @@ describe ( 'MildSet', it => {
     let primitive = 0;
     let object = {};
 
+    t.is ( set.size, 0 );
+
     t.false ( set.has ( primitive ) );
     t.false ( set.has ( object ) );
 
@@ -25,14 +27,20 @@ describe ( 'MildSet', it => {
     set.add ( primitive );
     set.add ( object );
 
+    t.is ( set.size, 2 );
+
     t.true ( set.has ( primitive ) );
     t.true ( set.has ( object ) );
 
     t.true ( set.delete ( primitive ) );
     t.true ( set.delete ( object ) );
 
+    t.is ( set.size, 0 );
+
     set.add ( primitive );
     set.add ( object );
+
+    t.is ( set.size, 2 );
 
     /* CLEANUP */
 
@@ -49,6 +57,7 @@ describe ( 'MildSet', it => {
     await delay ( 500 );
 
     t.is ( deleted, 1 );
+    t.is ( set.size, 1 );
 
   });
 
