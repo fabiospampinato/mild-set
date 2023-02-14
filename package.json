@@ -17,7 +17,7 @@
   "keywords": [
     "weak",
     "strong",
-    "map"
+    "set"
   ],
   "devDependencies": {
     "fava": "^0.1.2",
