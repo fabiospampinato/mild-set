@@ -19,6 +19,9 @@
     "strong",
     "set"
   ],
+  "dependencies": {
+    "is": "npm:@fabiospampinato/is@^2.5.0"
+  },
   "devDependencies": {
     "fava": "^0.1.2",
     "tsex": "^2.1.0",
