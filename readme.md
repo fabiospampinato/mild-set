@@ -5,7 +5,7 @@ A WeakSet that supports any value, it holds strong references to primitives, and
 ## Install
 
 ```sh
-npm install --save mild-set
+npm install mild-set
 ```
 
 ## Usage
