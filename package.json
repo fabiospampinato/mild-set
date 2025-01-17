@@ -2,6 +2,7 @@
   "name": "mild-set",
   "repository": "github:fabiospampinato/mild-set",
   "description": "A WeakSet that supports any value, it holds strong references to primitives, and weak references to objects.",
+  "license": "MIT",
   "version": "1.1.1",
   "type": "module",
   "main": "dist/index.js",
@@ -20,8 +21,8 @@
     "set"
   ],
   "devDependencies": {
-    "fava": "^0.2.1",
-    "tsex": "^3.0.1",
-    "typescript": "^5.1.6"
+    "fava": "^0.3.4",
+    "tsex": "^4.0.2",
+    "typescript": "^5.7.3"
   }
 }
