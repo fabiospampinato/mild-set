@@ -1,13 +1,7 @@
 
 /* IMPORT */
 
-import {isWeakReferable} from 'is';
-
-/* HELPERS */
-
-const isWeakable = ( value: unknown ): value is object => { //FIXME: Overridden type guard for convenience, delete this once TS updates its types
-  return isWeakReferable ( value );
-};
+import {isWeakReferable} from './utils';
 
 /* MAIN */
 
@@ -20,7 +14,7 @@ class MildSet<V> {
   #size = 0;
 
   #finalizationRegistry = new FinalizationRegistry ( () => this.#size -= 1 );
-  #finalizationTokens = new WeakMap<object, object> ();
+  #finalizationTokens = new WeakMap<WeakKey, object> ();
 
   /* CONSTRUCTOR */
 
@@ -58,7 +52,7 @@ class MildSet<V> {
 
     }
 
-    if ( isWeakable ( value ) ) {
+    if ( isWeakReferable ( value ) ) {
 
       this.#weak.add ( value );
 
@@ -89,7 +83,7 @@ class MildSet<V> {
 
     this.#size -= 1;
 
-    if ( isWeakable ( value ) ) {
+    if ( isWeakReferable ( value ) ) {
 
       const token = this.#finalizationTokens.get ( value );
 
@@ -112,7 +106,7 @@ class MildSet<V> {
 
   has ( value: V ): boolean {
 
-    if ( isWeakable ( value ) ) {
+    if ( isWeakReferable ( value ) ) {
 
       return this.#weak.has ( value );
 
