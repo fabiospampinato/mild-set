@@ -10,11 +10,16 @@ class MildSet<V> {
   /* VARIABLES */
 
   #strong = new Set<V> ();
-  #weak = new WeakSet<any> ();
+  #weak = new WeakSet<WeakKey> ();
+  #weakRefs = new Set<WeakRef<WeakKey>> ();
+  #weakRefsMap = new WeakMap<WeakKey, WeakRef<WeakKey>> ();
   #size = 0;
 
-  #finalizationRegistry = new FinalizationRegistry ( () => this.#size -= 1 );
   #finalizationTokens = new WeakMap<WeakKey, object> ();
+  #finalizationRegistry = new FinalizationRegistry<WeakRef<WeakKey>> ( weakRef => {
+    this.#size -= 1;
+    this.#weakRefs.delete ( weakRef );
+  });
 
   /* CONSTRUCTOR */
 
@@ -58,9 +63,12 @@ class MildSet<V> {
 
       if ( !hasValue ) {
 
+        const weakRef = new WeakRef ( value );
         const token = {};
 
-        this.#finalizationRegistry.register ( value, token, token );
+        this.#weakRefs.add ( weakRef );
+        this.#weakRefsMap.set ( value, weakRef );
+        this.#finalizationRegistry.register ( value, weakRef, token );
         this.#finalizationTokens.set ( value, token );
 
       }
@@ -92,6 +100,15 @@ class MildSet<V> {
         this.#finalizationRegistry.unregister ( token );
         this.#finalizationTokens.delete ( value );
 
+        const weakRef = this.#weakRefsMap.get ( value );
+
+        if ( weakRef ) {
+
+          this.#weakRefs.delete ( weakRef );
+          this.#weakRefsMap.delete ( value );
+
+        }
+
       }
 
       return this.#weak.delete ( value );
@@ -113,6 +130,63 @@ class MildSet<V> {
     } else {
 
       return this.#strong.has ( value );
+
+    }
+
+  }
+
+  /* ITERATION API */
+
+  [Symbol.iterator] (): IterableIterator<V> {
+
+    return this.values ();
+
+  }
+
+  * keys (): IterableIterator<V> {
+
+    yield * this.values ();
+
+
+  }
+
+  * values (): IterableIterator<V> {
+
+    yield * this.#strong.values ();
+
+    for ( const weakRef of this.#weakRefs ) {
+
+      const value = weakRef.deref ();
+
+      if ( value === undefined ) continue;
+
+      yield value as V;
+
+    }
+
+  }
+
+  * entries (): IterableIterator<[V, V]> {
+
+    yield * this.#strong.entries ();
+
+    for ( const weakRef of this.#weakRefs ) {
+
+      const value = weakRef.deref ();
+
+      if ( value === undefined ) continue;
+
+      yield [value as V, value as V];
+
+    }
+
+  }
+
+  forEach ( callback: ( value: V, key: V, set: MildSet<V> ) => void, thisArg?: any ): undefined {
+
+    for ( const [key, value] of this.entries () ) {
+
+      callback.call ( thisArg, value, key, this );
 
     }
 

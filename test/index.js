@@ -42,6 +42,13 @@ describe ( 'MildSet', it => {
 
     t.is ( set.size, 2 );
 
+    /* ITERATION - BEFORE */
+
+    t.deepEqual ( [...set.keys ()], [primitive, object] );
+    t.deepEqual ( [...set.values ()], [primitive, object] );
+    t.deepEqual ( [...set.entries ()], [[primitive, primitive], [object, object]] );
+    t.deepEqual ( [...set], [primitive, object] );
+
     /* CLEANUP */
 
     let deleted = 0;
@@ -58,6 +65,20 @@ describe ( 'MildSet', it => {
 
     t.is ( deleted, 1 );
     t.is ( set.size, 1 );
+
+    /* ITERATION - AFTER */
+
+    t.deepEqual ( [...set.keys ()], [primitive] );
+    t.deepEqual ( [...set.values ()], [primitive] );
+    t.deepEqual ( [...set.entries ()], [[primitive, primitive]] );
+    t.deepEqual ( [...set], [primitive] );
+
+    set.delete ( primitive );
+
+    t.deepEqual ( [...set.keys ()], [] );
+    t.deepEqual ( [...set.values ()], [] );
+    t.deepEqual ( [...set.entries ()], [] );
+    t.deepEqual ( [...set], [] );
 
   });
 
